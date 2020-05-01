@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import os
 import sys
-import token as token
+import passwords as keys
 
 client = commands.Bot(command_prefix = './')
 
@@ -33,5 +33,5 @@ for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         client.load_extension(f'cogs.{filename[:-3]}')
 
-client.run(token.get_discord_bot_token())
+client.run(keys.get_discord_bot_token())
     
