@@ -5,6 +5,7 @@ import sys
 import passwords as keys
 
 client = commands.Bot(command_prefix = './')
+client.remove_command('help')
 
 @client.event
 async def on_ready():
@@ -13,7 +14,7 @@ async def on_ready():
         for channel in server.text_channels:
             if(channel.name == 'general'):
                 await channel.send("I am online!")
-    #print('Bot is online!')
+    print('Bot is online!')
 
 @client.event
 async def on_member_join(member):
@@ -21,8 +22,8 @@ async def on_member_join(member):
     for server in servers:
         for channel in server.text_channels:
             if(channel.name == 'general'):
-                await channel.send(f'Welcome to {server.name}! You can see my commands by typing ./options!')
-    #print(f'{member} has joined the server!')
+                await channel.send(f'Welcome to {server.name}! You can see my commands by typing ./help!')
+    print(f'{member} has joined the server!')
 
 @client.command()
 async def ping(ctx):

@@ -19,12 +19,14 @@ class Developer(commands.Cog):
     @commands.command()
     @commands.is_owner()
     async def reload(self, ctx, extension):
+        print(f'Reloading {extension}')
         self.client.unload_extension(f'cogs.{extension}')
         self.client.load_extension(f'cogs.{extension}')
 
     @commands.command()
     @commands.is_owner()
     async def kill(self, ctx):
+        print('Killing bot!')
         servers = self.client.guilds
         for server in servers:
             for channel in server.text_channels:
