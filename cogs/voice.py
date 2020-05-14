@@ -14,6 +14,7 @@ ydl_opts = {
 
 }
 
+cached_songs = {}
 queue = {}
 players = {}
 
@@ -24,19 +25,22 @@ def get_song_file(url):
         song_file = 'music/' + song_title + '.mp3'
     return song_title, song_file
 
-def download(song_file, url):
+def download(song_title, song_file, url):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        if os.path.isfile(song_file) is not True:
+        if song_title not in cached_songs:
+            cached_songs.update({song_title : song_file})
             ydl.download([url])
+        else: 
+            print('Song is cached!')
     
 def check_queues(id):
-    queue_list = queue.get(str(id))
-    if queue_list != []: 
+    if queue.get(str(id)) != None: 
+        queue_list = queue.get(str(id))
         song = queue_list.pop(0)
-        download(song[1], song[2])
+        download(song[0], song[1], song[2])
         players[str(id)].play(discord.FFmpegPCMAudio(song[1]), after=lambda x = id: check_queues(x))
     else:
-        print('No more songs!')
+        print('No more song!')
 
 class Voice(commands.Cog):
     
@@ -54,18 +58,27 @@ class Voice(commands.Cog):
 
     @commands.command()
     async def play(self, ctx, url=None):
-        if(ctx.voice_client.is_connected()):
+
+        if ctx.voice_client in self.client.voice_clients:
             print('Playing!')
             id = ctx.message.guild.id
-            if url == None:
-                if str(id) not in players:
-                    players[str(id)] = ctx.voice_client
+            if str(id) not in players:
+                players[str(id)] = ctx.voice_client
+
+            if type(url) is int:
+                if url > 0:
+                    song_titles = list(cached_songs)
+                    song_title = song_titles[url -1]
+                    song_file = cached_songs.get(song_title)
+                    ctx.voice_client.play(discord.FFmpegPCMAudio(song_file), after=lambda x = id: check_queues(x))
+                else: 
+                    print('Not a valid cached song!')
+            elif url == None:
                 check_queues(id)
             else: 
-                song_file = get_song_file(url)
-                download(url, song_file)
+                song_title, song_file = get_song_file(url)
+                download(song_title, song_file, url)
                 ctx.voice_client.play(discord.FFmpegPCMAudio(song_file), after=lambda x = id: check_queues(x))
-                players[str(id)] = ctx.voice_client
         else:
             print('Not connected to join!')
 
@@ -75,7 +88,7 @@ class Voice(commands.Cog):
         song_title, song_file = get_song_file(url)
         if str(id) in queue:
             queue[str(id)].append((song_title, song_file, url))
-            print(queue)
+            #print(queue)
         else:
             queue[str(id)] = [(song_title, song_file, url)]
         print('Added song to queue!')
@@ -91,7 +104,19 @@ class Voice(commands.Cog):
                 description+=song[0] + '\n'
             queue_tile = discord.Embed(title=title, description=description)
             await ctx.send('', embed=queue_tile)
-            
+
+    @commands.command()
+    async def viewc(self, ctx):
+        title = 'Cached Songs'
+        description = ''
+        i = 1 
+        for song_file in cached_songs:
+            description+= str(i)+ '. ' + song_file+'\n'
+            i+=1
+        cache_tile = discord.Embed(title=title, description=description)
+        await ctx.send('', embed=cache_tile)
+        
+
     @commands.command()
     async def pause(self, ctx):
         ctx.voice_client.pause()
@@ -109,6 +134,7 @@ class Voice(commands.Cog):
         ctx.voice_client.stop()
         print(queue[str(ctx.message.guild.id)])
         check_queues(ctx.message.guild.id)
+
 
 def setup(client):
     client.add_cog(Voice(client))

@@ -25,12 +25,13 @@ def get_command_info(requested_command):
             desc=b
     if (title != '' and desc != ''):
         return title, desc
-    return 'No Command Found!', 'Use the options command to see a list of commands!'
+    return 'No Command Found!', 'Use !help to see a list of commands!'
 
 def format_command_list():
     command_list=''
     for a, b in command_info:
         command_list += a + '\n'
+    command_list+= 'Type !help followed by a specific command to learn more.' 
     return command_list
 
 class Information(commands.Cog):

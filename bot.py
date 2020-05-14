@@ -4,7 +4,7 @@ import os
 import sys
 import passwords as keys
 
-client = commands.Bot(command_prefix = './')
+client = commands.Bot(command_prefix = '!')
 client.remove_command('help')
 
 @client.event
@@ -22,7 +22,7 @@ async def on_member_join(member):
     for server in servers:
         for channel in server.text_channels:
             if(channel.name == 'general'):
-                await channel.send(f'Welcome to {server.name}! You can see my commands by typing ./help!')
+                await channel.send(f'Welcome to {server.name}! You can see my commands by typing !help.')
     print(f'{member} has joined the server!')
 
 @client.command()
