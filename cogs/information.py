@@ -5,14 +5,19 @@ command_info = [
 
     ('ping', 'Gets the ping of the user in ms\nPermission: All'),
     ('kill', 'Immediately disconnects the bot\nPermission: Admins'),
+    ('load', 'Loads the specifigy cog\nPermission: Admins'),
+    ('reload', 'Reloads the specifigy cog\nPermission: Admins'),
+    ('unload', 'Unloads the specifigy cog\nPermission: Admins'),
     ('join', 'Joins the current voice channel the user is connected to\nPermission: All'),
-    ('leave', 'Leaves the current voice channel the user is connected to\nPermission: All'),
-    ('play', 'Plays the youtube link provided by the user after the command or plays the song in queue\nPermission: All'),
-    ('add', 'Add the provided youtube link to the queue\nPermission: All'),
+    ('leave', 'Leaves the current voice channel the user is connected to and wipes the song cache\nPermission: All'),
+    ('play', 'Plays the youtube link or cached song number provided by the user after the command or plays the next song in queue\nEX:!play https://www.youtube.com/watch?v=-lbbHQbZNKg\n!play 1\nPermission: All'),
+    ('add', 'Add the provided youtube link or cached song number to the queue\nPermission: All'),
+    ('viewq', 'Provides a list of queued songs\nPermission: All'),
+    ('viewc', 'Provides a list of cached songs, in a numbered order. You can add or play these by using the command with the songs number\nPermission: All'),
     ('stop', 'Stops the player (not pause). Can only be started again by play command\nPermission: All'),
     ('pause', 'Pauses the song player (not stop). Can be started again with resume, or play\nPermission: All'),
     ('resume', 'Resumes the paused song\nPermission: All'),
-    ('help', 'Retrieves a list of commands, or if provided a command gives more information about the command\nPermission: All')
+    ('help', 'Retrieves a list of commands, or if provided a command gives more information about the command\nEX:!help play\nPermission: All')
 
 ]
 
