@@ -14,7 +14,6 @@ command_info = [
     ('add', 'Add the provided youtube link or cached song number to the queue\nPermission: All'),
     ('viewq', 'Provides a list of queued songs\nPermission: All'),
     ('viewc', 'Provides a list of cached songs, in a numbered order. You can add or play these by using the command with the songs number\nPermission: All'),
-    ('stop', 'Stops the player (not pause). Can only be started again by play command\nPermission: All'),
     ('pause', 'Pauses the song player (not stop). Can be started again with resume, or play\nPermission: All'),
     ('resume', 'Resumes the paused song\nPermission: All'),
     ('help', 'Retrieves a list of commands, or if provided a command gives more information about the command\nEX:!help play\nPermission: All')

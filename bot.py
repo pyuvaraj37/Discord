@@ -13,7 +13,7 @@ async def on_ready():
     for server in servers:
         for channel in server.text_channels:
             if(channel.name == 'general'):
-                await channel.send("I am online! Type command !help for more information!")
+                await channel.send("I am online! Type !help for list of commands!")
     print('Bot is online!')
 
 @client.event
@@ -34,5 +34,5 @@ for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         client.load_extension(f'cogs.{filename[:-3]}')
 
-client.run(keys.get_discord_bot_token_test())
+client.run(keys.get_discord_bot_token())
     
