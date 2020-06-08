@@ -5,6 +5,9 @@ import os
 import shutil
 from django.core.validators import URLValidator
 from cogs.music_player import music_player
+import sys
+sys.path.insert(0,'..')
+import search_yt as syt
 
 validate = URLValidator()
 
@@ -56,8 +59,6 @@ class Voice(commands.Cog):
             self.music_player[id].play(song_title, song_file)
         else:
             self.music_player[id].check_queue()
-        
-        
     
     @commands.command()
     async def add(self, ctx, input):
@@ -75,9 +76,16 @@ class Voice(commands.Cog):
             self.music_player[id].download(song_title, song_file, input)
             self.music_player[id].add_to_queue(song_title, song_file)
         else:
-            song_title, song_file = self.music_player[id].get_cached_song(input)
-            self.music_player[id].add_to_queue(song_title, song_file)
-  
+            if input.isdigit():
+                song_title, song_file = self.music_player[id].get_cached_song(input)
+                self.music_player[id].add_to_queue(song_title, song_file)
+            else:
+                url = syt.search(input)
+                song_title, song_file = get_song_file(url)
+                self.music_player[id].download(song_title, song_file, url)
+                self.music_player[id].add_to_queue(song_title, song_file)
+                await ctx.send(f'Found "{song_title}" from YT and added it to queue!')
+                
 
     @commands.command()
     async def viewq(self, ctx):
@@ -117,7 +125,6 @@ class Voice(commands.Cog):
 
     @commands.command()
     async def skip(self, ctx):
-        id = str(ctx.message.guild.id)
         ctx.voice_client.stop()
 
 def setup(client):

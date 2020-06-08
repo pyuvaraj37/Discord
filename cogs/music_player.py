@@ -30,7 +30,6 @@ class music_player(commands.Cog):
         self.context.voice_client.play(discord.FFmpegPCMAudio(song_file), after=lambda e:self.check_queue(e))
     
     def check_queue(self, e=None):
-        context = self.context
         if len(self.queue) != 0:
             song = self.queue.pop(0)
             song_title = song[0]
@@ -39,7 +38,6 @@ class music_player(commands.Cog):
             self.context.voice_client.play(discord.FFmpegPCMAudio(song_file), after=lambda e:self.check_queue(e))
     
     def add_to_queue(self, song_title, song_file):
-        context = self.context
         print(f'Added {song_title}!')
         self.queue.append((song_title, song_file))
 
