@@ -11,11 +11,29 @@ import search_yt as syt
 
 validate = URLValidator()
 
+ydl_opts = {
+    'format': 'bestaudio/best',
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
+    'outtmpl': 'music/%(title)s.%(ext)s',
+}
+
+def make_safe_filename(s):
+    def safe_char(c):
+        if c != '*':
+            return c
+        else:
+            return "_"
+    return "".join(safe_char(c) for c in s)
+
 def get_song_file(url):
-    with youtube_dl.YoutubeDL() as ydl:
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         meta = ydl.extract_info(url, download = False)
-        song_title = meta['title']
-        song_file = 'music/' + song_title + '.mp3'
+        song_title = meta.get('title')
+        song_file = 'music/' + make_safe_filename(song_title) + '.mp3'
     return song_title, song_file
 
 class Voice(commands.Cog):
@@ -39,9 +57,11 @@ class Voice(commands.Cog):
     @commands.command()
     async def play(self, ctx, input=None):
         id = str(ctx.message.guild.id)
-        self.music_player[id].update_context(ctx)
-        isURL = True
 
+        if id not in self.music_player:
+            self.music_player.update({id: music_player(id, ctx)})
+
+        isURL = True
         #checks url
         try:
             validate(input)
@@ -63,8 +83,10 @@ class Voice(commands.Cog):
     @commands.command()
     async def add(self, ctx, input):
         id = str(ctx.message.guild.id)
-        self.music_player[id].update_context(ctx)
         isURL = True
+
+        if id not in self.music_player:
+            self.music_player.update({id: music_player(id, ctx)})
         
         try:
             validate(input)
@@ -80,11 +102,12 @@ class Voice(commands.Cog):
                 song_title, song_file = self.music_player[id].get_cached_song(input)
                 self.music_player[id].add_to_queue(song_title, song_file)
             else:
-                url = syt.search(input)
-                song_title, song_file = get_song_file(url)
-                self.music_player[id].download(song_title, song_file, url)
-                self.music_player[id].add_to_queue(song_title, song_file)
-                await ctx.send(f'Found "{song_title}" from YT and added it to queue!')
+                async with ctx.typing():
+                    url = syt.search(input)
+                    song_title, song_file = get_song_file(url)
+                    self.music_player[id].download(song_title, song_file, url)
+                    self.music_player[id].add_to_queue(song_title, song_file)
+                    await ctx.send(f'Found "{song_title}" from YT and added it to queue!')
                 
 
     @commands.command()

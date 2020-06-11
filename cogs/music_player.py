@@ -35,6 +35,7 @@ class music_player(commands.Cog):
             song_title = song[0]
             song_file = song[1]
             print(f'Playing {song_title}!')
+            print(song_file)
             self.context.voice_client.play(discord.FFmpegPCMAudio(song_file), after=lambda e:self.check_queue(e))
     
     def add_to_queue(self, song_title, song_file):
